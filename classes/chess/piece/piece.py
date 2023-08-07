@@ -1,8 +1,6 @@
-from abc import abstractmethod
-from classes.chess.piece.observer import Observer
-#from board import Board
+from abc import ABC, abstractmethod
 
-class Piece(Observer):
+class Piece(ABC):
   def __init__(self, color: str, pos: tuple):
     self.color = color
     self.pos = pos
@@ -10,10 +8,7 @@ class Piece(Observer):
     self.not_moved = True
     self.front: str
     self.back: str
-    
-  @abstractmethod
-  def update(self, value) -> None:
-    pass
+
   
   @abstractmethod
   def name(self) -> str:
@@ -28,7 +23,7 @@ class Piece(Observer):
     pass
   
   def move(self, board, pos: tuple):
-    if pos not in self.check_moves(board, pos):
+    if pos not in self.check_moves(board):
       return False
     if self.not_moved:
       self.not_moved = False
@@ -37,12 +32,12 @@ class Piece(Observer):
     return True
   
   # Check if the move is a check position
-  def check_moves(self, board, pos: tuple) -> list:
+  def check_moves(self, board) -> list:
     moves = []
     prev_pos = self.pos
     for move in self.validate_moves(board):
       post_pos = move
-      if board.move_check(board, prev_pos, post_pos):
+      if board.move_check(prev_pos, post_pos):
         moves.append(move)
     return moves
   
@@ -52,15 +47,15 @@ class Piece(Observer):
     for move in self.get_raw_moves():
       x, y = move
       if x<0 or x>7 or y<0 or y>7:
-        pass
-      cell = board[y][x]
+        continue
+      cell = board.board[y][x]
       if cell is not None:
         if cell.color == self.color:
-          pass
+          continue
       moves.append(move)
     return moves
   
   # Get the attacking pos of the piece 
   # (to override it in pawn)
   def attack_pos(self, board):
-    return self.valid_moves(self, board)
+    return self.validate_moves(board)

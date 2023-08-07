@@ -10,7 +10,8 @@ class ImageLoader:
     path = './assets/chess/boards/'
     
     for file in os.listdir(path):
-      #print(file[:-4])
+      if file[-2:] == 'py':
+        continue
       image = Image.open(os.path.join(path, file))
       image = image.convert('RGBA')
       images[file[:-4]] = image
@@ -24,7 +25,7 @@ class ImageLoader:
     
     for file in os.listdir(path):
       image = Image.open(os.path.join(path, file))
-      image = image.convert('RGBA').resize((image.width//2, image.height//2))
+      image = image.convert('RGBA')
       images[file[:-4]] = image
     return images
   
